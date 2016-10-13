@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">School Tracker</string>
+    <string name="create_sample_data">Create sample data</string>
+    <string name="delete_all_terms">Delete all terms</string>
+    <string name="all_deleted">All terms deleted</string>
+    <string name="are_you_sure">Are you sure?</string>
+    <string name="new_term">New Term</string>
+    <string name="action_delete">Delete</string>
+    <string name="term_deleted">Term deleted</string>
+</resources>

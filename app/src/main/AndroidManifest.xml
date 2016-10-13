@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.example.schooltracker">
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+        <activity android:name=".MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <provider
+            android:name=".STProvider"
+            android:authorities="com.example.schooltracker.schooltrackerprovider"
+            android:exported="false" />
+
+        <activity
+            android:name=".TermsActivity"
+            android:label="Terms" />
+        <activity
+            android:name=".CoursesActivity"
+            android:label="Courses" />
+        <activity
+            android:name=".AssessmentsActivity"
+            android:label="Assessments" />
+        <activity
+            android:name=".MentorsActivity"
+            android:label="Mentors" />
+        <activity
+            android:name=".AlertsActivity"
+            android:label="Alerts" />
+        <activity android:name=".EditTermActivity"></activity>
+        <activity android:name=".EditCourseActivity"></activity>
+    </application>
+
+</manifest>
