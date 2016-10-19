@@ -45,21 +45,10 @@
         android:textSize="18sp"/>
 
     <Button
-        android:id="@+id/button_mentors"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/button_assessments"
-        android:layout_centerHorizontal="true"
-        android:layout_margin="4dp"
-        android:text="Mentors"
-        android:onClick="openMentorsScreen"
-        android:textSize="18sp"/>
-
-    <Button
         android:id="@+id/button_alerts"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/button_mentors"
+        android:layout_below="@+id/button_assessments"
         android:layout_centerHorizontal="true"
         android:layout_margin="4dp"
         android:text="Alerts"

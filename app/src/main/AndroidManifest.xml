@@ -31,13 +31,11 @@
             android:name=".AssessmentsActivity"
             android:label="Assessments" />
         <activity
-            android:name=".MentorsActivity"
-            android:label="Mentors" />
-        <activity
             android:name=".AlertsActivity"
             android:label="Alerts" />
         <activity android:name=".EditTermActivity"></activity>
         <activity android:name=".EditCourseActivity"></activity>
+        <activity android:name=".EditAssessmentActivity"></activity>
     </application>
 
 </manifest>

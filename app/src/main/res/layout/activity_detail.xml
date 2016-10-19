@@ -21,7 +21,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/editName"
-        android:text="Data1: "
+        android:text="Data1"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:onClick="onData1Click"/>
 
@@ -31,9 +31,19 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:layout_below="@+id/tvData1"
-        android:text="Data2: "
+        android:text="Data2"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:onClick="onData2Click"/>
+
+    <TextView
+        android:id="@+id/tvData3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:layout_below="@+id/tvData2"
+        android:text="Data3"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:onClick="onData3Click"/>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -70,6 +80,8 @@
         android:layout_width="match_parent"
         android:layout_height="259dp"
         android:id="@+id/listChildren"
-        android:layout_gravity="center_horizontal" />
+        android:layout_gravity="center_horizontal"
+        android:choiceMode="singleChoice"
+        android:listSelector="#666666"/>
 
 </LinearLayout>

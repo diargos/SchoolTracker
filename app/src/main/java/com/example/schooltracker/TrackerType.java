@@ -4,7 +4,6 @@ public enum TrackerType {
     TERM,
     COURSE,
     ASSESSMENT,
-    MENTOR,
     ALERT,
     NOTE;
 
@@ -16,6 +15,17 @@ public enum TrackerType {
                 return ASSESSMENT;
             default:
                 return TERM;
+        }
+    }
+
+    public static TrackerType getTypeFromString(String type) {
+        switch (type.toUpperCase()) {
+            case "TERM": return TERM;
+            case "COURSE": return COURSE;
+            case "ASSESSMENT": return ASSESSMENT;
+            case "ALERT": return ALERT;
+            case "NOTE": return NOTE;
+            default: return null;
         }
     }
 }

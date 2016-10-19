@@ -7,10 +7,10 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class DBOpenHelper extends SQLiteOpenHelper {
 
     public static final String DATABASE_NAME = "schooltracker.db";
-    public static final int DATABASE_VERSION = 3;
+    public static final int DATABASE_VERSION = 4;
 
     public static final String TABLE = "tracker";
-    public static final String[] COLUMNS = {"_id", "type", "name", "parent", "data1", "data2"};
+    public static final String[] COLUMNS = {"_id", "type", "name", "parent", "data1", "data2", "data3", "data4"};
 
     public DBOpenHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -24,7 +24,9 @@ public class DBOpenHelper extends SQLiteOpenHelper {
                 "parent INTEGER, " +
                 "name TEXT, " +
                 "data1 TEXT, " +
-                "data2 TEXT " +
+                "data2 TEXT, " +
+                "data3 TEXT, " +
+                "data4 TEXT " +
                 ")";
         db.execSQL(query);
     }
