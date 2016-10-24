@@ -32,4 +32,14 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(this, AlertsActivity.class);
         startActivity(intent);
     }
+
+    public void openMentorsScreen(View view) {
+        Intent intent = new Intent(this, MentorsActivity.class);
+        startActivity(intent);
+    }
+
+    public void openNotesScreen(View view) {
+        Intent intent = new Intent(this, NotesActivity.class);
+        startActivity(intent);
+    }
 }

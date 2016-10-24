@@ -5,7 +5,8 @@ public enum TrackerType {
     COURSE,
     ASSESSMENT,
     ALERT,
-    NOTE;
+    NOTE,
+    MENTOR;
 
     public TrackerType getChildType() {
         switch (this) {
@@ -13,6 +14,8 @@ public enum TrackerType {
                 return COURSE;
             case COURSE:
                 return ASSESSMENT;
+            case ASSESSMENT:
+                return NOTE;
             default:
                 return TERM;
         }
@@ -25,6 +28,7 @@ public enum TrackerType {
             case "ASSESSMENT": return ASSESSMENT;
             case "ALERT": return ALERT;
             case "NOTE": return NOTE;
+            case "MENTOR": return MENTOR;
             default: return null;
         }
     }

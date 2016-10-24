@@ -7,8 +7,6 @@ import android.widget.TextView;
 
 public class EditCourseActivity extends TrackerActivity {
 
-    
-
     public EditCourseActivity() {
         type = TrackerType.COURSE;
         isDetailActivity = true;

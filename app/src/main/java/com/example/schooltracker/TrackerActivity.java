@@ -14,6 +14,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
@@ -42,18 +43,26 @@ public abstract class TrackerActivity extends AppCompatActivity
 
     protected EditText editorName;
     protected TextView editorData1;
+    protected CheckBox editorChkData1;
+    protected CheckBox editorChkData2;
     protected TextView editorData2;
     protected TextView editorData3;
+    protected TextView editorChildType;
     protected ListView editorChildList;
+
+    protected TrackerObject alert1;
+    protected TrackerObject alert2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         if(isDetailActivity) {
             setContentView(R.layout.activity_detail);
         } else {
             setContentView(R.layout.activity_summary);
         }
+
         contentURI = STProvider.CONTENT_URI;
         childType = type.getChildType();
         filterValues[0] = type.toString();
@@ -87,8 +96,12 @@ public abstract class TrackerActivity extends AppCompatActivity
         if (isDetailActivity) {
             editorName = (EditText) findViewById(R.id.editName);
             editorData1 = (TextView) findViewById(R.id.tvData1);
+            editorChkData1 = (CheckBox) findViewById(R.id.chkData1);
             editorData2 = (TextView) findViewById(R.id.tvData2);
+            editorChkData2 = (CheckBox) findViewById(R.id.chkData2);
             editorData3 = (TextView) findViewById(R.id.tvData3);
+            editorChildType = (TextView) findViewById(R.id.tvTypePicker);
+
             editorChildList = (ListView) findViewById(R.id.listChildren);
             Button editorAddChildBtn = (Button) findViewById(R.id.btnAddChild);
             Button editorRemoveChildBtn = (Button) findViewById(R.id.btnRemoveChild);
@@ -137,13 +150,27 @@ public abstract class TrackerActivity extends AppCompatActivity
                             "ChildObject"};
             }
 
-
             editorName.setHint(labels[0]);
             editorData1.setText(labels[1]);
             editorData2.setText(labels[2]);
+            editorChildType.setText(labels[3] + "s");
             editorAddChildBtn.setText("Add " + labels[3]);
             editorRemoveChildBtn.setText("Remove " + labels[3]);
             editorChildrenLbl.setText(labels[3] + "s");
+
+            editorChkData1.setVisibility(View.GONE);
+            editorChkData2.setVisibility(View.GONE);
+
+            switch (type) {
+                case COURSE:
+                    editorChkData2.setVisibility(View.VISIBLE);
+                    editorChkData2.setChecked(false);
+                case ASSESSMENT:
+                    editorChkData1.setVisibility(View.VISIBLE);
+                    editorChkData1.setChecked(false);
+                    break;
+            }
+
         }
     }
 
@@ -170,9 +197,6 @@ public abstract class TrackerActivity extends AppCompatActivity
                     Cursor cursor = (Cursor) editorChildList.getItemAtPosition(position);
                     cursor.moveToPosition(position);
                     selectedFromList = String.valueOf(cursor.getInt(cursor.getColumnIndex("_id")));
-                    System.out.println("On selection - object: " + cursor.getString(cursor.getColumnIndex("name")));
-                    System.out.println("On selection - position: " + position);
-                    System.out.println("On selection - id: " + id);
                 }
             });
 
@@ -200,10 +224,22 @@ public abstract class TrackerActivity extends AppCompatActivity
                 existingData.data3 = cursor.getString(cursor.getColumnIndex("data3"));
 
                 editorName.setText(existingData.name);
-                editorName.requestFocus();
+                //editorName.requestFocus();
                 editorData1.setText(existingData.data1);
                 editorData2.setText(existingData.data2);
                 editorData3.setText(existingData.data3);
+
+                switch (type) {
+                    case COURSE:
+                        editorChkData2.setVisibility(View.VISIBLE);
+                    case ASSESSMENT:
+                        editorChkData1.setVisibility(View.VISIBLE);
+                        initAlertData();
+                        break;
+                    default :
+                }
+
+                // TODO: close all cursors
             }
         } else {  // summary activity
             ListView list = (ListView) findViewById(android.R.id.list);
@@ -212,28 +248,29 @@ public abstract class TrackerActivity extends AppCompatActivity
             list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                boolean addChild = getIntent().getBooleanExtra("AddChild", false);
 
-                    boolean addChild = getIntent().getBooleanExtra("AddChild", false);
-
-                    if (addChild) {
-                        Intent returnIntent = new Intent();
-                        returnIntent.putExtra("ChildToAdd", String.valueOf(id));
-                        setResult(RESULT_OK, returnIntent);
-                        finish();
-                    } else {
-                        Intent intent = new Intent(TrackerActivity.this, detailClass);
-                        // todo: STProvider.CONTENT_URI only... is this even needed if using filter on id?
-                        // todo: content_item_type
-                        Uri uri = Uri.parse(STProvider.CONTENT_URI + "/" + id); // todo: make this uri static somewhere
-                        intent.putExtra(STProvider.CONTENT_ITEM_TYPE, uri);
-                        startActivityForResult(intent, TrackerObject.NORMAL_REQUEST);
-                    }
+                if (addChild) {
+                    Intent returnIntent = new Intent();
+                    returnIntent.putExtra("ChildToAdd", String.valueOf(id));
+                    setResult(RESULT_OK, returnIntent);
+                    finish();
+                } else {
+                    Intent intent = new Intent(TrackerActivity.this, detailClass);
+                    // todo: STProvider.CONTENT_URI only... is this even needed if using filter on id?
+                    // todo: content_item_type
+                    Uri uri = Uri.parse(STProvider.CONTENT_URI + "/" + id); // todo: make this uri static somewhere
+                    intent.putExtra(STProvider.CONTENT_ITEM_TYPE, uri);
+                    startActivityForResult(intent, TrackerObject.NORMAL_REQUEST);
+                }
                 }
             });
         }
     }
 
     //endregion
+
+    //region Data and Alerts
 
     public void setData1(String data) {
         TextView tv = (TextView) findViewById(R.id.tvData1);
@@ -264,6 +301,151 @@ public abstract class TrackerActivity extends AppCompatActivity
                 desc = "";
         }
         tv.setText(desc + data);
+    }
+
+    public void onChkData1Click(View view) {
+        handleAlertChecks(true);
+    }
+
+    public void onChkData2Click(View view) {
+        handleAlertChecks(false);
+    }
+
+    private void handleAlertChecks(boolean isData1) {
+        // Cannot set an alert on a new Course/Assessment object, this
+        // must be done during an update of the Course/Assessment.
+        if (filterValues[1] == null || filterValues[1].isEmpty()){
+            editorChkData1.setChecked(false);
+            editorChkData2.setChecked(false);
+            Toast.makeText(this, "Cannot save alert during new " + getType(),
+                    Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        TrackerObject alert;
+        TextView textView;
+        CheckBox checkBox;
+
+        if (isData1) {
+            alert = alert1;
+            textView = editorData1;
+            checkBox = editorChkData1;
+        } else {
+            alert = alert2;
+            textView = editorData2;
+            checkBox = editorChkData2;
+        }
+
+        String rawData = (String) textView.getText();
+        String[] elements = rawData.split(":");
+        String dateType = elements[0];
+        String date = elements[1].trim();
+        String rawName = String.valueOf(editorName.getText());
+        int maxLength = rawName.length() < 10 ? rawName.length() : 10;
+        String name = String.valueOf(editorName.getText()).substring(0, maxLength)
+                + ": " + dateType + " = " + date;
+
+        if (checkBox.isChecked()) {
+            if (!date.equals("")) {
+                if (alert == null) { // new alert
+                    alert = new TrackerObject();
+                    alert.name = name;
+                    alert.type = TrackerType.ALERT;
+                    if (isData1)
+                        alert.data1 = date;
+                    else
+                        alert.data2 = date;
+                    alert.parent = Integer.parseInt(filterValues[1]);
+                    alert.id = Integer.parseInt(insertData(alert)); // Insert the alert object
+                } else { // existing alert
+                    alert = retrieveData(String.valueOf(alert.id));
+                    alert.name = name;
+                    if (isData1)
+                        alert.data1 = date;
+                    else
+                        alert.data2 = date;
+                    updateData(alert); // update the alert object
+                }
+            } else { // date has not be set
+                checkBox.setChecked(false);
+                Toast.makeText(this, "Cannot save alert: invalid parameter",
+                        Toast.LENGTH_SHORT).show();
+            }
+        } else { // checkbox is unchecked
+            if (alert.id != 0) {
+                deleteData(String.valueOf(alert.id), true);
+            }
+        }
+    }
+
+    protected void initAlertData() {
+        String filter = "type='ALERT' and parent=" + filterValues[1];
+        Cursor cursor = getContentResolver().query(STProvider.CONTENT_URI,
+                DBOpenHelper.COLUMNS, filter, null, null);
+
+        try {
+            while (cursor.moveToNext()) {
+                int id = cursor.getInt(cursor.getColumnIndex("_id"));
+                String name = cursor.getString(cursor.getColumnIndex("name"));
+                String data1 = cursor.getString(cursor.getColumnIndex("data1"));
+                String data2 = cursor.getString(cursor.getColumnIndex("data2"));
+
+                if (data1 != null && !data1.isEmpty()) {
+                    alert1 = new TrackerObject();
+                    alert1.id = id;
+                    alert1.name = name;
+                    alert1.data1 = data1;
+                    alert1.type = TrackerType.ALERT;
+                    editorChkData1.setChecked(true);
+                } else if (data2 != null && !data2.isEmpty()) {
+                    alert2 = new TrackerObject();
+                    alert2.id = id;
+                    alert2.name = name;
+                    alert2.data2 = data2;
+                    alert2.type = TrackerType.ALERT;
+                    editorChkData2.setChecked(true);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            cursor.close();
+        }
+    }
+
+    public void onTypePickerClick(View view) {
+        if (type == TrackerType.COURSE) {
+            TextView tvType = (TextView) findViewById(R.id.tvTypePicker);
+            TextView tvChildren = (TextView) findViewById(R.id.lblChildren);
+            String currentValue = (String) tvType.getText();
+            String newValue;
+
+            switch (currentValue) {
+                case "Assessments":
+                    newValue = "Notes";
+                    childType = TrackerType.NOTE;
+                    childClass = NotesActivity.class;
+                    break;
+                case "Notes":
+                    newValue = "Mentors";
+                    childType = TrackerType.MENTOR;
+                    childClass = MentorsActivity.class;
+                    break;
+                case "Mentors":
+                default:
+                    newValue = "Assessments";
+                    childType = TrackerType.ASSESSMENT;
+                    childClass = AssessmentsActivity.class;
+            }
+            tvChildren.setText(newValue);
+            tvType.setText(newValue);
+            Button buttonAdd = (Button) findViewById(R.id.btnAddChild);
+            Button buttonRemove = (Button) findViewById(R.id.btnRemoveChild);
+            buttonAdd.setText("Add " + childType.toString());
+            buttonRemove.setText("Remove " + childType.toString());
+
+            restartLoader(1);
+        }
     }
 
     private String getType() {
@@ -297,6 +479,55 @@ public abstract class TrackerActivity extends AppCompatActivity
             restartLoader(1);
         }
     }
+
+    private void deleteTerm() {
+        Cursor cursor = getContentResolver().query(STProvider.CONTENT_URI,
+                DBOpenHelper.COLUMNS, "parent=" + filterValues[1], null, null);
+
+        if (cursor == null || cursor.getCount() == 0) {
+            deleteData(filterValues[1], false);
+        } else {
+            Toast.makeText(this, "Terms with assigned courses cannot be deleted",
+                    Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    protected String finishEditing() {
+        TrackerObject newObj = new TrackerObject();
+        newObj.id = Integer.valueOf(filterValues[1] == "" ? "0" : filterValues[1]);
+        newObj.name = editorName.getText().toString().trim();
+        newObj.type = this.type;
+        newObj.data1 = editorData1.getText().toString();
+        newObj.data2 = editorData2.getText().toString();
+        newObj.data3 = editorData3.getText().toString();
+        String result = "";
+
+        switch (action) {
+            case Intent.ACTION_INSERT:
+                if (newObj.name.length() == 0) {
+                    setResult(RESULT_CANCELED);
+                } else {
+                    result = insertData(newObj);
+                }
+                break;
+            case Intent.ACTION_EDIT:
+                if (newObj.name.length() == 0) {
+                    if (type == TrackerType.TERM) {
+                        deleteTerm();
+                    } else {
+                        deleteData(filterValues[1], false);
+                    }
+                } else {
+                    updateData(newObj);
+                }
+        }
+        action = Intent.ACTION_EDIT;
+        return result;
+    }
+
+    //endregion
+
+    //region Menu handling
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -350,7 +581,7 @@ public abstract class TrackerActivity extends AppCompatActivity
                     if (type == TrackerType.TERM) {
                         deleteTerm();
                     } else {
-                        deleteData();
+                        deleteData(filterValues[1], false);
                     }
                     break;
             }
@@ -358,50 +589,8 @@ public abstract class TrackerActivity extends AppCompatActivity
         return true;
     }
 
-    private void deleteTerm() {
-        Cursor cursor = getContentResolver().query(STProvider.CONTENT_URI,
-                DBOpenHelper.COLUMNS, "parent=" + filterValues[1], null, null);
 
-        if (cursor == null || cursor.getCount() == 0) {
-            deleteData();
-        } else {
-            Toast.makeText(this, "Terms with assigned courses cannot be deleted",
-                    Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    protected String finishEditing() {
-        TrackerObject newObj = new TrackerObject();
-        newObj.id = Integer.valueOf(filterValues[1] == "" ? "0" : filterValues[1]);
-        newObj.name = editorName.getText().toString().trim();
-        newObj.type = this.type;
-        newObj.data1 = editorData1.getText().toString();
-        newObj.data2 = editorData2.getText().toString();
-        newObj.data3 = editorData3.getText().toString();
-        String result = "";
-
-        switch (action) {
-            case Intent.ACTION_INSERT:
-                if (newObj.name.length() == 0) {
-                    setResult(RESULT_CANCELED);
-                } else {
-                    result = insertData(newObj);
-                }
-                break;
-            case Intent.ACTION_EDIT:
-                if (newObj.name.length() == 0) {
-                    if (type == TrackerType.TERM) {
-                        deleteTerm();
-                    } else {
-                        deleteData();
-                    }
-                } else {
-                    updateData(newObj);
-                }
-        }
-        action = Intent.ACTION_EDIT;
-        return result;
-    }
+    //endregion
 
     //region LoaderManager
 
@@ -482,7 +671,7 @@ public abstract class TrackerActivity extends AppCompatActivity
         values.put("parent", obj.parent);
         values.put("data1", obj.data1);
         values.put("data2", obj.data2);
-        values.put("data3", obj.data4);
+        values.put("data3", obj.data3);
         values.put("data4", obj.data4);
         String filter = "_id = " + obj.id;
 
@@ -507,11 +696,14 @@ public abstract class TrackerActivity extends AppCompatActivity
         return uri.getLastPathSegment();
     }
 
-    private void deleteData() {
-        getContentResolver().delete(STProvider.CONTENT_URI, filter, filterValues);
-        Toast.makeText(this, getType() + " deleted", Toast.LENGTH_SHORT).show();
-        setResult(RESULT_OK);
-        finish();
+    private void deleteData(String id, boolean alert) {
+        String filter = "_id = " + id;
+        getContentResolver().delete(STProvider.CONTENT_URI, filter, null);
+        if (!alert) {
+            Toast.makeText(this, getType() + " deleted", Toast.LENGTH_SHORT).show();
+            setResult(RESULT_OK);
+            finish();
+        }
     }
 
     //endregion

@@ -1,7 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
+    android:focusable="true"
+    android:focusableInTouchMode="true">
+
+<LinearLayout
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:id="@+id/activityDetailLayout"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
     android:orientation="vertical"
     android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
@@ -16,6 +25,7 @@
         android:layout_marginBottom="24dp"
         android:hint="Name"/>
 
+
     <TextView
         android:id="@+id/tvData1"
         android:layout_width="wrap_content"
@@ -25,15 +35,31 @@
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:onClick="onData1Click"/>
 
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tvData1"
+        android:id="@+id/chkData1"
+        android:onClick="onChkData1Click"
+        android:text="Set Alert"/>
+
     <TextView
         android:id="@+id/tvData2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
-        android:layout_below="@+id/tvData1"
+        android:layout_below="@+id/chkData1"
         android:text="Data2"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:onClick="onData2Click"/>
+
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tvData2"
+        android:id="@+id/chkData2"
+        android:onClick="onChkData2Click"
+        android:text="Set Alert"/>
 
     <TextView
         android:id="@+id/tvData3"
@@ -45,10 +71,28 @@
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:onClick="onData3Click"/>
 
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="20dp"
+        android:background="@android:color/darker_gray"/>
+
+    <TextView
+        android:id="@+id/tvTypePicker"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Type"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:layout_gravity="center_horizontal"
+        android:textAlignment="center"
+        android:onClick="onTypePickerClick"/>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="10dp"
         android:layout_alignParentBottom="true"
         android:orientation="horizontal">
 
@@ -85,3 +129,4 @@
         android:listSelector="#666666"/>
 
 </LinearLayout>
+</ScrollView>
